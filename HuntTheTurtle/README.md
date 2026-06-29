@@ -1,76 +1,133 @@
-# 🔹 Hunt The Turtle – ROS 2 TurtleSim
+# Hunt The Turtle
 
-This project simulates a dynamic game of **turtle chasing** using ROS 2 and the `turtlesim` simulator. A central controller (`turtle1`) is used to **chase and remove spawned turtles** from the simulation.
+A ROS 2 application that demonstrates autonomous target hunting using publishers, subscribers, services, and custom interfaces in the **turtlesim** simulator. The project consists of a turtle spawner node that continuously spawns turtles and a controller node that autonomously navigates `turtle1` to catch and remove them from the simulation.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/40829d57-f72f-4df8-a7dd-6d96f7fd7e38" width="100%" />
+  <img src="https://github.com/user-attachments/assets/40829d57-f72f-4df8-a7dd-6d96f7fd7e38" width="100%">
 </p>
 
 ---
 
-## 🔹 Project Logic
+## Project Overview
 
-The system involves two main components:
+The application consists of two ROS 2 nodes working together to create a dynamic turtle hunting simulation.
 
-### 🔹 Turtle Spawner Node (`TurtleSpawnerNode`)
-- Periodically **spawns turtles** at random positions within the simulator.
-- Each turtle is given a **unique name** using a configurable prefix (`turtle1`, `turtle2`, ...).
-- Maintains and **publishes a list** of all currently alive turtles using a custom `TurtleArray` message.
-- Offers a service `catch_turtle` to **remove a specific turtle** from the simulation (via the `/kill` service).
+### Turtle Spawner Node
 
-### 🔹 Turtle Controller Node (`TurtleControllerNode`)
-- Subscribes to the `alive_turtles` topic.
-- Tracks the pose of the main turtle (`/turtle1`) and all alive turtles.
-- Depending on a parameter (`catch_closest_turtle`), it either:
-  - Chases the **first turtle** in the list, or
-  - Calculates and chases the **closest turtle**.
-- Once `turtle1` is **close enough to a target turtle**, it calls the `catch_turtle` service to remove it from the simulation.
+The **TurtleSpawnerNode** is responsible for managing turtles within the simulator. It:
 
----
+* Periodically spawns turtles at random positions.
+* Assigns a unique name to every spawned turtle.
+* Maintains a list of all active turtles.
+* Publishes the active turtle list using a custom `TurtleArray` message.
+* Provides a `catch_turtle` service that removes turtles from the simulator through the `/kill` service.
 
-## 🔹 What's Included?
+### Turtle Controller Node
 
--  `turtle_controller_node.py`  
--  `turtle_spawner_node.py`  
--  No full ROS 2 package setup (`setup.py`, `package.xml`, etc.)
+The **TurtleControllerNode** controls `turtle1` and performs autonomous target tracking. It:
 
----
+* Subscribes to the `alive_turtles` topic.
+* Tracks the pose of `turtle1` and all spawned turtles.
+* Supports two hunting strategies:
 
-## ⚠️ Note to Users
-
-This repository **only contains the core Python scripts**.
-
-To run the system, you will need to:
-
-1. Create a ROS 2 Python package.
-2. Add the scripts to your package's `scripts/` or `src/` directory.
-3. Define custom messages and services (`Turtle`, `TurtleArray`, `CatchTurtle`) in your interface files (`msg/` and `srv/`).
-4. Update `setup.py`, `package.xml`, and `CMakeLists.txt` accordingly.
-5. Build the package with `colcon build`.
+  * Chase the first turtle in the list.
+  * Chase the closest available turtle.
+* Automatically calls the `catch_turtle` service when the target turtle is reached.
 
 ---
 
-## 🔹 Example Parameters (Optional)
+## Features
 
-You can adjust parameters like spawn frequency or behavior preference:
+* Autonomous turtle hunting
+* Random turtle spawning
+* Publisher–Subscriber communication
+* ROS 2 Services
+* Custom Messages and Services
+* Parameterized controller behavior
+* Real-time target selection
 
-```yaml
-# Turtle Spawner Node
-spawn_frequency: 0.5           # Spawn a turtle every 0.5 seconds
-turtle_name_prefix: "turtle"
+---
 
-# Turtle Controller Node
-catch_closest_turtle: true     # If true, controller will catch the closest turtle
+## Project Structure
+
+```text
+HuntTheTurtle/
+│
+├── turtle_controller_node.py
+├── turtle_spawner_node.py
+│
+└── README.md
 ```
 
 ---
 
-## 🔹 Author
+## Repository Notes
 
-**Name:** Harshak V P  
-**LinkedIn:** [linkedin.com/in/harshakvp](https://www.linkedin.com/in/harshakvp/)
+This repository contains the **core Python source code** for the project. It does **not** include the complete ROS 2 package configuration files such as:
 
-This project was developed as a learning exercise in ROS 2 and turtlesim.  
-Feel free to use, modify, and extend it as needed!
+* `package.xml`
+* `setup.py`
+* `setup.cfg`
+* `CMakeLists.txt`
+* Custom message and service interface definitions
+
+To run this project, you should:
+
+1. Create a ROS 2 Python package.
+2. Add the provided source files to your package.
+3. Create the required custom interfaces (`Turtle`, `TurtleArray`, and `CatchTurtle`).
+4. Configure the package using the required ROS 2 build files.
+5. Build the workspace:
+
+```bash
+colcon build
+```
+
+6. Source the workspace:
+
+```bash
+source install/setup.bash
+```
 
 ---
+
+## Example Parameters
+
+```yaml
+# Turtle Spawner Node
+spawn_frequency: 0.5
+turtle_name_prefix: "turtle"
+
+# Turtle Controller Node
+catch_closest_turtle: true
+```
+
+---
+
+## Technologies Used
+
+* ROS 2
+* Python
+* turtlesim
+* Custom ROS 2 Messages
+* Custom ROS 2 Services
+
+---
+
+## Author
+
+### Harshak V P
+
+Electrical and Electronics Engineering Undergraduate
+Vellore Institute of Technology (VIT), Vellore
+
+#### Connect
+
+* GitHub: [harshakvp](https://github.com/harshakvp)
+* LinkedIn: [Harshak V P](https://www.linkedin.com/in/harshakvp/)
+* Portfolio: [harshakvp.dev](https://chain-science-5eb.notion.site/HARSHAK-V-P-4f4889ae8ebf4c05a5790637c39213ba)
+* Email: [harshakvp.contact@gmail.com](mailto:harshakvp.contact@gmail.com)
+
+---
+
+This project was developed as part of my learning journey in ROS 2 and robotic software development. Feel free to explore, use, modify, and extend it for your own learning and experimentation.
